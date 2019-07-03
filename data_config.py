@@ -10,3 +10,45 @@ class Http_Request():
 "Upgrade-Insecure-Requests": "1",
 "User-Agent":" Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.100 Safari/537.36",
 }
+
+class Choose_detail:
+    def judge_one(data):
+        temp_dic = {}
+        for k,v in data.items():
+            if (k == 'f43'):
+                temp_dic['现价'] = v
+            if(k=='f44'):
+                temp_dic['今开']=v
+            elif(k=='f46'):
+                temp_dic['最高']=v
+            elif(k=='f45'):
+                temp_dic['最低']=v
+            elif(k=='f51'):
+                temp_dic['涨停']=v
+            elif(k=='f168'):
+                temp_dic['换手']=v
+            elif(k=='f47'):
+                temp_dic['成交量']=v
+            elif(k=='f52'):
+                temp_dic['跌停']=v
+            elif(k=='f50'):
+                temp_dic['量比']=v
+            elif(k=='f48'):
+                temp_dic['成交额']=v
+            elif(k=='f167'):
+                temp_dic['市净']=v
+            elif(k=='f117'):
+                temp_dic['流通市值']=v
+            elif(k=='f60'):
+                temp_dic['昨收']=v
+            elif(k=='f173'):
+                temp_dic['ROE']=v
+            elif(k=='f186'):
+                temp_dic['毛利率']=v
+            elif(k=='f105'):
+                temp_dic['净利润']=v
+            elif(k=='f188'):
+                temp_dic['负债率']=v
+            elif(k=='f58'):
+                temp_dic['股票']=v
+        return temp_dic
