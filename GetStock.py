@@ -10,7 +10,8 @@ import data_config
 detail_url = "http://64.push2.eastmoney.com/api/qt/clist/get?cb=jQuery1124001651461580406255_1561992580766&pn=1&pz=3754&po=1&np=1&ut=bd1d9ddb04089700cf9c27f6f7426281&fltt=2&invt=2&fid=f3&fs=m:0+t:6,m:0+t:13,m:0+t:80,m:1+t:2&fields=f2,f12,f14,f13&_=1561992580767"
 # 爬虫抓取网页函数
 def getHtml(url):
-    request = urllib.request.Request(url, headers=data_config.Http_Request.headers)
+    mm=data_config.Http_Request()
+    request = urllib.request.Request(url, headers=mm.get_header())
     html = urllib.request.urlopen(request).read().decode('utf-8')
     pos_start = html.find("[")#截取以'['开头的
     pos_end = html.find("]")
@@ -20,7 +21,7 @@ def getHtml(url):
 stocks,temp = [],{}
 code =json.loads(getHtml(detail_url))
 for name in code:
-    if(name["f2"]!="-"):#所有未退市的股票
+    if(name["f2"]!="-" and name["f2"]<140):#所有未退市的低于140元的股票
         temp["stock_code"]=name["f12"]#写入字典
         temp["stock_name"]=name["f14"]#写入字典
         temp["secid"]=name["f13"]#写入字典

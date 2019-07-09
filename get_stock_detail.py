@@ -5,50 +5,55 @@ import urllib
 import urllib.parse
 import data_config
 import re
-import unittest
 import datetime
 import threading
-import socket
 import time
 import urllib.error
-import random
-import os
 from queue import Queue
+
 ssl._create_default_https_context = ssl._create_unverified_context
 
 def get_detail(secid,code_number,qq):
     #fltt是控制小数点的，secid是控制股票代号
-    url ='http://push2.eastmoney.com/api/qt/stock/get?&fltt=2&fields=f43,f57,f58,f169,f46,f44,f51,f168,f47,f60,f45,f116,f117,f52,f50,f48,f167,f71,f49,f60,f137,f188,f105,f173,f186,f195,f196,f43,f197&' \
-         'secid='+str(secid)+'.'+str(code_number)
+    url = data_config.Get_Detail_Info_Url+'secid='+str(secid)+'.'+str(code_number)
     code =json.loads(getHtml(url))
-    #return data_config.Choose_detail.judge_one(code)
-    qq.put(code['f58'])
-    #return(code['f58'])
+    qq.put(data_config.Choose_detail.judge_one(code))
+    #print(code['f58'])
 
 def getHtml(url):#获取个股详细字典
     global res
-    Pool = False
-    time.sleep(0.1)
     mm=data_config.Http_Request()
     request = urllib.request.Request(url, headers=mm.get_header())
     try:
-        html = urllib.request.urlopen(request)
+        html = urllib.request.urlopen(request,timeout=10)
         res = re.search(r"(:{1})+(\{.+\})", html.read().decode('utf-8')).group()[1:-1]
-    except urllib.error.URLError:
-        Pool = True
-        while Pool:
+    except:
+        exPool = True
+        while exPool:
             try:
                 time.sleep(3)
-                #print("----------------------------------------")
-                html = urllib.request.urlopen(request)
+                # print("----------------------------------------")
+                html = urllib.request.urlopen(request,timeout=10)
                 res = re.search(r"(:{1})+(\{.+\})", html.read().decode('utf-8')).group()[1:-1]
-                Pool=False
+                exPool = False
             except:
-                Pool=True
+                pass
+    # while exPool: #循环抓取直到没异常发生
+    #     try:
+    #         html = urllib.request.urlopen(request)
+    #         res = re.search(r"(:{1})+(\{.+\})", html.read().decode('utf-8')).group()[1:-1]
+    #         exPool = False
+    #     except:
+    #         time.sleep(3)
+    #         continue
     return res
 # for k,v in data_config.Choose_detail.judge_one(code).items():
 #     print(k+"："+str(v))
 
+#筛选算法---核心---
+def stock_filter(data):
+        if(data["现价"]>100):
+            print("%s:%s%%" % (data["股票"], data["现价"]))
 
 #输出所有股票代码
 # with open('stocks.json') as j:
@@ -62,12 +67,12 @@ with open('stocks.json') as j:
     threads=[]
     for sc in json.load(j):
         num=num+1;
-        t1 = threading.Thread(target=get_detail, args=(sc['secid'],sc['stock_code'],q), name="T1")
+        t1 = threading.Thread(target=get_detail, args=(sc['secid'],sc['stock_code'],q))
         t1.start()
         threads.append(t1)
     results=[]
     for s in range(num):
-        print(q.get()+str(s))
-    print(num)
+        stock_filter(q.get())
+    print("--------总计算量:%d--------" % num)
 end=datetime.datetime.now()#结束时间
-print('运行时间: %s 秒'%(end-start))
+print('--运行时间: %s秒--'%(end-start))
