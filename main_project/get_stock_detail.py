@@ -3,7 +3,7 @@ from urllib import request
 import ssl
 import urllib
 import urllib.parse
-import data_config
+import project_files.data_config as d
 import re
 import datetime
 import threading
@@ -15,14 +15,14 @@ ssl._create_default_https_context = ssl._create_unverified_context
 
 def get_detail(secid,code_number,qq):
     #fltt是控制小数点的，secid是控制股票代号
-    url = data_config.Get_Detail_Info_Url+'secid='+str(secid)+'.'+str(code_number)
+    url = d.Get_Detail_Info_Url+'secid='+str(secid)+'.'+str(code_number)
     code =json.loads(getHtml(url))
-    qq.put(data_config.Choose_detail.judge_one(code))
+    qq.put(d.Choose_detail.judge_one(code))
     #print(code['f58'])
 
 def getHtml(url):#获取个股详细字典
     global res
-    mm=data_config.Http_Request()
+    mm=d.Http_Request()
     request = urllib.request.Request(url, headers=mm.get_header())
     try:
         html = urllib.request.urlopen(request,timeout=10)

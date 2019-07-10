@@ -7,7 +7,7 @@ from urllib import request
 import ssl
 import json
 import urllib.parse
-import project_file.data_config
+import project_files.data_config as d
 import datetime
 import re
 import urllib
@@ -18,7 +18,7 @@ ssl._create_default_https_context = ssl._create_unverified_context
 def getHtml(code,secid,qq):#获取每个股票的月线详情
     Stock_Year_Detail_Url = "http://pdfm.eastmoney.com/EM_UBG_PDTI_Fast/api/js?rtntype=5&token=4f1862fc3b5e77c150a2b985b12db0fd&" \
                             "cb=jQuery18306381636561594661_1562731154930&id="+code+secid+"&type=mk&authorityType=&_=1562731160889"
-    mm=data_config.Http_Request()
+    mm=d.Http_Request()
     request = urllib.request.Request(Stock_Year_Detail_Url, headers=mm.get_header())
     try:
         html = urllib.request.urlopen(request, timeout=10)
@@ -38,15 +38,18 @@ def getHtml(code,secid,qq):#获取每个股票的月线详情
 
 
 def List_Stocks():#先条用getHtml()再条用Compare_stock()
-    with open("..\stocks.json","r") as j:
+    num = 0
+    with open("stocks.json","r") as j:
         q = Queue()
         threads = []
-        for sc in json.load(j)[:1]:
+        for sc in json.load(j)[:2]:
+            num=num+1
             t1=threading.Thread(target=getHtml,args=(sc["stock_code"],str(sc["mk"]),q),)
             t1.start()
             threads.append(t1)
             #Compare_stock(getHtml(sc["stock_code"],str(sc["mk"])))
-        print(q.get())
+        for s in range(num):
+            print(q.get())
 def Compare_stock(data):#比较股票是否创新高
     Now_data=json.loads(data)
     now_price = Now_data[-1].split(',')[2]
