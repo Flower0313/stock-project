@@ -38,29 +38,12 @@ def getHtml(url):#获取个股详细字典
                 exPool = False
             except:
                 pass
-    # while exPool: #循环抓取直到没异常发生
-    #     try:
-    #         html = urllib.request.urlopen(request)
-    #         res = re.search(r"(:{1})+(\{.+\})", html.read().decode('utf-8')).group()[1:-1]
-    #         exPool = False
-    #     except:
-    #         time.sleep(3)
-    #         continue
     return res
-# for k,v in data_config.Choose_detail.judge_one(code).items():
-#     print(k+"："+str(v))
 
 #筛选算法---核心---
 def stock_filter(data):
         if(data["涨幅"]>3):
             print("%s:%s%%" % (data["股票"], data["涨幅"]))
-        if(data["现价"]>100):
-            print("%s:%s%%" % (data["股票"], data["现价"]))
-
-#输出所有股票代码
-# with open('stocks.json') as j:
-#     for sc in json.load(j):
-#         print(get_detail(sc['secid'],sc['stock_code']))
 
 start= datetime.datetime.now()#开始时间
 num=0
