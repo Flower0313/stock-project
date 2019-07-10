@@ -7,7 +7,7 @@ from urllib import request
 import ssl
 import json
 import urllib.parse
-import data_config
+import project_file.data_config
 import datetime
 import re
 import urllib
@@ -38,8 +38,7 @@ def getHtml(code,secid,qq):#获取每个股票的月线详情
 
 
 def List_Stocks():#先条用getHtml()再条用Compare_stock()
-
-    with open('stocks.json') as j:
+    with open("..\stocks.json","r") as j:
         q = Queue()
         threads = []
         for sc in json.load(j)[:1]:

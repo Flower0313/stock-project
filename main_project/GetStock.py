@@ -40,7 +40,7 @@ for name in code:
         stocks.append(temp.copy())#将字典存入列表以组成json，必须用copy()
         temp.clear()#再清空，因为一次存一个
 #存入json文件
-with open("stocks.json",'w') as f:
+with open("project_file/stocks.json",'w') as f:
     json.dump(stocks, f, ensure_ascii=False, indent=4)#第二个参数是防止中文乱码，第三个参数是排列
 
 #读取股票数
