@@ -3,15 +3,15 @@ import time
 import threading
 import time
 from queue import Queue
-import random
 from urllib import request
 import ssl
 import json
-import urllib
 import urllib.parse
 import data_config
 import datetime
 import re
+import urllib
+
 
 ssl._create_default_https_context = ssl._create_unverified_context
 
@@ -76,3 +76,5 @@ print('--运行时间: %s秒--'%(end-start))
 # with open("project_file/New_high.json") as f:
 #     #f.write(getHtml(Stock_Year_Detail_Url))#第二个参数是防止中文乱码，第三个参数是排列
 #     ff=json.loads(f.read())
+
+

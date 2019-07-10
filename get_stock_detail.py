@@ -54,6 +54,8 @@ def getHtml(url):#获取个股详细字典
 def stock_filter(data):
         if(data["涨幅"]>3):
             print("%s:%s%%" % (data["股票"], data["涨幅"]))
+        if(data["现价"]>100):
+            print("%s:%s%%" % (data["股票"], data["现价"]))
 
 #输出所有股票代码
 # with open('stocks.json') as j:

@@ -288,12 +288,6 @@
         "mk": 2
     },
     {
-        "stock_code": "300782",
-        "stock_name": "卓胜微",
-        "secid": 0,
-        "mk": 2
-    },
-    {
         "stock_code": "600687",
         "stock_name": "*ST刚泰",
         "secid": 1,
@@ -472,12 +466,6 @@
         "stock_name": "江海股份",
         "secid": 0,
         "mk": 2
-    },
-    {
-        "stock_code": "603160",
-        "stock_name": "汇顶科技",
-        "secid": 1,
-        "mk": 1
     },
     {
         "stock_code": "300497",
@@ -1598,12 +1586,6 @@
     {
         "stock_code": "300064",
         "stock_name": "豫金刚石",
-        "secid": 0,
-        "mk": 2
-    },
-    {
-        "stock_code": "300760",
-        "stock_name": "迈瑞医疗",
         "secid": 0,
         "mk": 2
     },
@@ -19262,12 +19244,6 @@
     {
         "stock_code": "002522",
         "stock_name": "浙江众成",
-        "secid": 0,
-        "mk": 2
-    },
-    {
-        "stock_code": "300747",
-        "stock_name": "锐科激光",
         "secid": 0,
         "mk": 2
     },
