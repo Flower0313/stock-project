@@ -11,7 +11,7 @@ class Http_Request():
 Get_Detail_Info_Url="http://push2.eastmoney.com/api/qt/stock/get?&fltt=2&fields=f43,f170,f57,f58,f169,f46,f44,f51,f168,f47,f60,f45," \
                     "f116,f117,f52,f50,f48,f167,f71,f49,f60,f137,f188,f105,f173,f186,f195,f196,f43,f197&"
 
-Industry Segments_Url="http://60.push2.eastmoney.com/api/qt/clist/get?cb=jQuery1124018031994186919387_1562640559933&pn=1&pz=61&" \
+Industry_Segments_Url="http://60.push2.eastmoney.com/api/qt/clist/get?cb=jQuery1124018031994186919387_1562640559933&pn=1&pz=61&" \
                       "ut=bd1d9ddb04089700cf9c27f6f7426281&fltt=2&invt=2&fid=f3&fs=m:90+t:2&fields=f1,f2,f3,f4,f5,f6,f7,f8,f9,f10," \
                       "f12,f13,f14,f15,f16,f17,f18,f20,f21,f23,f24,f25,f26,f22,f33,f11,f62,f128,f136,f115,f152,f124,f107,f104,f105,f140," \
                       "f141,f207,f222&_=1562640559934"
