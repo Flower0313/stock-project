@@ -57,7 +57,7 @@ with open('stocks.json') as j:
         threads.append(t1)
     results=[]
     for s in range(num):
-        stock_filter(q.get())
+        print(q.get()["股票"]+str(s))
     print("--------总计算量:%d--------" % num)
 end=datetime.datetime.now()#结束时间
 print('--运行时间: %s秒--'%(end-start))

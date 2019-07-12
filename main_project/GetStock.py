@@ -33,7 +33,7 @@ for name in code:
         temp["stock_code"]=name["f12"]#写入字典
         temp["stock_name"]=name["f14"]#写入字典
         temp["secid"]=name["f13"]#写入字典
-        if (str(name["f12"])[:3] == "300" or str(name["f12"])[:3] == "002" or str(name["f12"])[:3] == "000"):
+        if (str(name["f12"])[:3] == "300" or str(name["f12"])[:3] == "002" or str(name["f12"])[:3] == "000" or str(name["f12"][:3])=="001"):
             temp["mk"] = 2  # 看个股月线时有用：2代表深圳，1代表上海
         else:
             temp["mk"] = 1
