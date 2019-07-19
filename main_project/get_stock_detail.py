@@ -21,23 +21,16 @@ def get_detail(secid,code_number,qq):
     #print(code['f58'])
 
 def getHtml(url):#获取个股详细字典
-    global res
     mm=d.Http_Request()
     request = urllib.request.Request(url, headers=mm.get_header())
-    try:
-        html = urllib.request.urlopen(request,timeout=10)
-        res = re.search(r"(:{1})+(\{.+\})", html.read().decode('utf-8')).group()[1:-1]
-    except:
-        exPool = True
-        while exPool:
-            try:
-                time.sleep(3)
-                # print("----------------------------------------")
-                html = urllib.request.urlopen(request,timeout=10)
-                res = re.search(r"(:{1})+(\{.+\})", html.read().decode('utf-8')).group()[1:-1]
-                exPool = False
-            except:
-                pass
+    while True:
+        try:
+            html = urllib.request.urlopen(request, timeout=10)
+            res = re.search(r"(:{1})+(\{.+\})", html.read().decode('utf-8')).group()[1:-1]
+            break
+        except Exception as e:
+            time.sleep(3)
+            pass
     return res
 
 #筛选算法---核心---
