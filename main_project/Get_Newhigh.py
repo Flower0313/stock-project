@@ -26,13 +26,14 @@ def getHtml(name,code,mk,qq):#获取每个股票的月线详情
             time.sleep(3)
             # if(str(e)=="'NoneType' object has no attribute 'group'"):
             #     break
-            print("-----------------1"+name+"1------------------")
+            #print("-----------------1"+name+"1------------------")
             pass
     #print(name+code+"\\"+str(temp_data))
     qq.put(name+code+Compare_stock(data))
     #urllib.error.URLError
     #socket.timeout: timed out
     #AttributeError
+
 #开始函数
 def List_Stocks():#先条用getHtml()再条用Compare_stock()
     num = 0
@@ -56,9 +57,8 @@ def List_Stocks():#先条用getHtml()再条用Compare_stock()
              print(str(s)[:-1])
     print("--------总计算量：%d--------"%num)
 
-#筛选出是否创新高
 def Compare_stock(data):#比较股票是否创新高
-     
+    #创历史新高返回1，没有则返回0
     Now_data=json.loads(data)
     now_price = Now_data[-1].split(',')[2]
     for line in Now_data:
@@ -71,7 +71,6 @@ def Compare_stock(data):#比较股票是否创新高
 
 start= datetime.datetime.now()#开始时间
 List_Stocks()
-#getHtml("松花","603863","1")
 end=datetime.datetime.now()#结束时间
 print('--运行时间: %s秒--'%(end-start))
 
