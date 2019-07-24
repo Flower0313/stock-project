@@ -15,6 +15,7 @@ lock=threading.Lock()
 def getHtml(name,code,mk,qq):#获取每个股票的月线详情
     Stock_Year_Detail_Url = "http://pdfm.eastmoney.com/EM_UBG_PDTI_Fast/api/js?rtntype=5&token=4f1862fc3b5e77c150a2b985b12db0fd&" \
                             "cb=jQuery18306381636561594661_1562731154930&id=" + code + mk + "&type=mk&authorityType=&_=1562731160889"
+
     mm = d.Http_Request()
     request = urllib.request.Request(Stock_Year_Detail_Url, headers=mm.get_header())
     while True:
@@ -28,7 +29,7 @@ def getHtml(name,code,mk,qq):#获取每个股票的月线详情
             #     break
             #print("-----------------1"+name+"1------------------")
             pass
-    #print(name+code+"\\"+str(temp_data))
+    #print(name+code+"\\"+str(data))
     qq.put(name+code+Compare_stock(data))
     #urllib.error.URLError
     #socket.timeout: timed out
@@ -46,15 +47,17 @@ def List_Stocks():#先条用getHtml()再条用Compare_stock()
             t1=threading.Thread(target=getHtml,args=(sc["stock_name"],sc["stock_code"],str(sc["mk"]),q),)
             t1.start()
             threads.append(t1)
-        for _ in threads:
-            t1.join()
+        # for _ in threads:
+        #     t1.join()
         print("------以下为创历史新高的股票------")
         for _ in threads:
-            #print(q.get(block=True,timeout=None)+"\\"+str(s))
-            results.append(q.get(block=True,timeout=None))
-    for s in results:
-         if(str(s)[-1]=="1"):
-             print(str(s)[:-1])
+            temp = q.get(block=True,timeout=None)
+            if(temp[-1]=="1"):
+                print(temp[:-1])
+            #results.append(q.get(block=True,timeout=None))
+    #for s in results:
+         # if(str(s)[-1]=="1"):
+         #     print(str(s)[:-1])
     print("--------总计算量：%d--------"%num)
 
 def Compare_stock(data):#比较股票是否创新高

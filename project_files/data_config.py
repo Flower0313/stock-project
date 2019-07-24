@@ -8,7 +8,7 @@ class Http_Request():
         return header
 
 Get_Detail_Info_Url="http://push2.eastmoney.com/api/qt/stock/get?&fltt=2&fields=f43,f170,f57,f58,f169,f46,f44,f51,f168,f47,f60,f45," \
-                    "f116,f117,f52,f50,f48,f167,f71,f49,f60,f137,f188,f105,f173,f186,f195,f196,f43,f197&"
+                    "f116,f117,f52,f50,f48,f167,f71,f49,f60,f137,f188,f105,f173,f186,f195,f196,f43,f197,f84&"
 
 Industry_Segments_Url="http://60.push2.eastmoney.com/api/qt/clist/get?cb=jQuery1124018031994186919387_1562640559933&pn=1&pz=61&" \
 
@@ -16,6 +16,27 @@ Industry_Segments_Url="http://60.push2.eastmoney.com/api/qt/clist/get?cb=jQuery1
                       "ut=bd1d9ddb04089700cf9c27f6f7426281&fltt=2&invt=2&fid=f3&fs=m:90+t:2&fields=f1,f2,f3,f4,f5,f6,f7,f8,f9,f10," \
                       "f12,f13,f14,f15,f16,f17,f18,f20,f21,f23,f24,f25,f26,f22,f33,f11,f62,f128,f136,f115,f152,f124,f107,f104,f105,f140," \
                       "f141,f207,f222&_=1562640559934"
+
+class Great_Detail():
+    def day_data(data):
+        return "http://pdfm.eastmoney.com/EM_UBG_PDTI_Fast/api/js?token=4f1862fc3b5e77c150a2b985b12db0fd&rtntype=6&" \
+               "id="+str(data)+"&type=k&authorityType=fa&cb=jsonp1563531034531"
+    def min_data(data):
+        return "http://pdfm2.eastmoney.com/EM_UBG_PDTI_Fast/api/js?js=js3((x))&js=js3&" \
+               "id="+str(data)+"&type=rk&rtntype=5&isCR=false&_=1563678900338"
+    def fiveday_data(data):
+        return "http://pdfm.eastmoney.com/EM_UBG_PDTI_Fast/api/js?token=4f1862fc3b5e77c150a2b985b12db0fd&rtntype=5&" \
+               "id="+str(data)+"&type=t5k&iscr=false&cb=jsonp1563681514351"
+    def week_data(data):
+        return "http://pdfm.eastmoney.com/EM_UBG_PDTI_Fast/api/js?token=4f1862fc3b5e77c150a2b985b12db0fd&rtntype=6&" \
+               "id="+str(data)+"&type=wk&authorityType=fa&cb=jsonp1563681565259"
+    def month_data(data):
+        return "http://pdfm.eastmoney.com/EM_UBG_PDTI_Fast/api/js?token=4f1862fc3b5e77c150a2b985b12db0fd&rtntype=6&" \
+               "id="+str(data)+"&type=mk&authorityType=fa&cb=jsonp1563681151026"
+    def hour_data(data):
+        return "http://pdfm.eastmoney.com/EM_UBG_PDTI_Fast/api/js?token=4f1862fc3b5e77c150a2b985b12db0fd&rtntype=6&" \
+               "id="+str(data)+"&type=m60k&authorityType=fa&cb=jsonp1563681123318"
+
 class Choose_detail:
     def judge_one(data):
         temp_dic = {}
@@ -60,4 +81,8 @@ class Choose_detail:
                 temp_dic['涨幅'] = v
             elif (k == 'f169'):
                 temp_dic['涨跌价'] = v
+            elif (k == 'f84'):
+                temp_dic['总股本'] = v
+            elif (k == 'f57'):
+                temp_dic['代码'] = v
         return temp_dic
