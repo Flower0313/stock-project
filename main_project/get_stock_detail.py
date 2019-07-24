@@ -35,8 +35,8 @@ def getHtml(url):#获取个股详细字典
 
 #筛选算法---核心---
 def stock_filter(data):
-        if(data["涨幅"]>3):
-            print("%s:%s%%" % (data["股票"], data["涨幅"]))
+        if(data["毛利率"]>30 and data["毛利率"]<40 and data["总股本"]<1000000000 and data["ROE"]>5 and data["现价"]<15):
+            print("%s:%s" % (data["股票"], data["代码"]))
 
 start= datetime.datetime.now()#开始时间
 num=0
@@ -49,8 +49,8 @@ with open('stocks.json') as j:
         t1.start()
         threads.append(t1)
     results=[]
-    for s in range(num):
-        print(q.get()["股票"]+str(s))
+    for s in threads:
+        stock_filter(q.get())
     print("--------总计算量:%d--------" % num)
 end=datetime.datetime.now()#结束时间
 print('--运行时间: %s秒--'%(end-start))
