@@ -22,13 +22,20 @@ highs = []
 lows = []
 DIFS=[]
 DEAS=[]
+RSIS = []
 MACDS=[]
 INCREASES = []
+KS = []
+DS = []
+JS = []
 shou.reverse()
 
 
-def getDetail_Data():
-    Stock_Year_Detail_Url = d.Great_Detail.day_data('6038671')
+def getDetail_Data(code,methods):
+    shou.clear()
+    highs.clear()
+    lows.clear()
+    Stock_Year_Detail_Url = d.Great_Detail.day_data(code)
     mm = d.Http_Request()
     request = urllib.request.Request(Stock_Year_Detail_Url, headers=mm.get_header())
     while True:
@@ -39,6 +46,12 @@ def getDetail_Data():
                 shou.append(s.split(',')[2])
                 highs.append(s.split(',')[3])
                 lows.append(s.split(',')[4])
+            if(methods=="MACD"):
+                GET_DIFandDEAandMACD.GET_ALL(shou)
+            elif(methods[:3]=="RSI"):
+                GET_RSI.counter_diff(shou,int(methods[3:]))
+            elif(methods=="KDJ"):
+                GET_KDJ.Begin_KD(shou)
             break
         except:
             pass
@@ -74,7 +87,7 @@ class GET_RSI():
     def counter_diff(data,X):
         INCREASES.clear()
         data.reverse()
-        print(shou)
+        #print(shou)
         for s in range(len(data)):  # 计算差价
             if s == len(shou) - 1:
                 increase = 0
@@ -110,40 +123,71 @@ class GET_RSI():
                 RSI = (RS / (1 + RS)) * 100
             except ZeroDivisionError:
                 RSI = 100
-            print(numpy.round(RSI, decimals=2))
+            RSIS.append(numpy.round(RSI, decimals=2))
+        print(RSIS)
+
+class GET_KDJ():
+    def getKD(num,total):
+        #东方财富没有默认k值为50
+        if(num!=-1):
+            start = total-num
+            nine_max = float(max(highs[start:start+9]))
+            nine_min = float(min(lows[start:start+9]))
+            shou_price = float(shou[num])
+            try:
+                RSV = (shou_price-nine_min)*100/(nine_max-nine_min)
+            except ZeroDivisionError:
+                DS.append(0.0)
+                RSV = 0.0
+            if RSV==100 and num==0:
+                DS.append(100.0)
+                return 100.0
+            #print(str(RSV)+"||"+str(nine_max)+"||"+str(nine_min)+"||"+str(shou_price))
+            elif num==0 and RSV!=0.0 and RSV!=100:
+                K_temp = 1/3*RSV+50
+                DS.append(K_temp)
+                return K_temp
+            K = 2/3*GET_KDJ.getKD(num-1,total) + 1/3*RSV
+            D = numpy.round(1/3*K+2/3*DS[num-1],decimals=2)
+            if K>100:
+                DS.append(100)
+                return 100
+            elif len(DS)<=num:
+                DS.append(D)
+            return numpy.round(K, decimals=2)
+        return 0
+
+    def Count_J(KS,DS):
+        for S in range(len(KS)):
+            JS.append(numpy.round(3*KS[S] - 2*DS[S],decimals=3))
 
 
-def getK(num,total):
-    #东方财富没有默认k值为50
-    if(num!=-1):
-        start = total-num
-        nine_max = float(max(highs[start:start+9]))
-        nine_min = float(min(lows[start:start+9]))
-        shou_price = float(shou[num])
-        try:
-            RSV = (shou_price-nine_min)*100/(nine_max-nine_min)
-        except ZeroDivisionError:
-            RSV = 0.0
-        if RSV==100 and num==0:
-            return 100
-        #print(str(RSV)+"||"+str(nine_max)+"||"+str(nine_min)+"||"+str(shou_price))
-        elif num==0 and RSV!=0.0 and RSV!=100:
-            return 1/3*RSV+50
-        K = 2/3*getK(num-1,total) + 1/3*RSV
-        if K>100:
-            return 100
-        return numpy.round(K, decimals=2)
-    return 0
+    def Begin_KD(data):
+        KS.clear()
+        DS.clear()
+        JS.clear()
+        highs.reverse()
+        lows.reverse()
+        for s in range(len(data)):
+            KS.append(GET_KDJ.getKD(s, len(data) - 1))
+            if (s != len(data) - 1):
+                DS.clear()
+        GET_KDJ.Count_J(KS,DS)
+        print(KS)
+        print(DS)
+        print(JS)
+
+
 
 start= datetime.datetime.now()
-getDetail_Data()
-#GET_RSI.counter_diff(shou,6)
-#GET_DIFandDEAandMACD.GET_ALL(shou)
 
-highs.reverse()
-lows.reverse()
-for s in range(len(shou)):
-    print(getK(s, len(shou) - 1))
+
+getDetail_Data('6038631','RSI24')
+getDetail_Data('6038631',"MACD")
+getDetail_Data('6038631',"KDJ")
+
+
+
 end=datetime.datetime.now()
 print('--运行时间: %s秒--'%(end-start))
 #array = np.array(data)
