@@ -28,6 +28,7 @@ INCREASES = []
 KS = []
 DS = []
 JS = []
+BIAS = []
 shou.reverse()
 
 
@@ -52,6 +53,8 @@ def getDetail_Data(code,methods):
                 GET_RSI.counter_diff(shou,int(methods[3:]))
             elif(methods=="KDJ"):
                 GET_KDJ.Begin_KD(shou)
+            elif(methods[:4]=="BIAS"):
+                GET_BIAS.Begin_bias(shou,int(methods[4:]))
             break
         except:
             pass
@@ -142,7 +145,6 @@ class GET_KDJ():
             if RSV==100 and num==0:
                 DS.append(100.0)
                 return 100.0
-            #print(str(RSV)+"||"+str(nine_max)+"||"+str(nine_min)+"||"+str(shou_price))
             elif num==0 and RSV!=0.0 and RSV!=100:
                 K_temp = 1/3*RSV+50
                 DS.append(K_temp)
@@ -178,13 +180,39 @@ class GET_KDJ():
         print(JS)
 
 
+def getDIF(X, N):  # 通过12日EMA和26日EMA差值计算DIF
+    if X == 0:
+        return float(shou[X])
+    return 2 / (N + 1) * float(shou[X]) + (1 - (2 / (N + 1))) * GET_DIFandDEAandMACD.getDIF(X - 1, N)
+def getDEA(X,N):
+    if X==0:
+        return 0.0
+    return float(DIFS[X])*(2/(N+1))+(1-(2/(N+1)))*GET_DIFandDEAandMACD.getDEA(X-1,N)
+
+class GET_BIAS():
+    def get_bias(data,N,C):
+        if(N>=(C-1)):
+            num = 0
+            for s in range(C):
+                num+=float(data[N-s])
+            bias = (float(data[N])-(num/C))/(num/C)*100
+            return numpy.round(bias,decimals=3)
+        else:
+            return 0
+
+    def Begin_bias(data,C):
+        BIAS.clear()
+        for s in range(len(data)):
+            BIAS.append(GET_BIAS.get_bias(data, s, C))
+        print(BIAS)
 
 start= datetime.datetime.now()
 
 
-getDetail_Data('6038631','RSI24')
-getDetail_Data('6038631',"MACD")
-getDetail_Data('6038631',"KDJ")
+# getDetail_Data('6038631','RSI24')
+# getDetail_Data('6038631',"MACD")
+# getDetail_Data('6038631',"KDJ")
+#getDetail_Data('6038671',"BIAS12")
 
 
 
