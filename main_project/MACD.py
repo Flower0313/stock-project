@@ -29,6 +29,7 @@ KS = []
 DS = []
 JS = []
 BIAS = []
+WRS =[]
 shou.reverse()
 
 
@@ -55,6 +56,8 @@ def getDetail_Data(code,methods):
                 GET_KDJ.Begin_KD(shou)
             elif(methods[:4]=="BIAS"):
                 GET_BIAS.Begin_bias(shou,int(methods[4:]))
+            elif(methods[:2]=="WR"):
+                GET_WR.Begin_WR(shou,int(methods[2:]))
             break
         except:
             pass
@@ -206,10 +209,34 @@ class GET_BIAS():
             BIAS.append(GET_BIAS.get_bias(data, s, C))
         print(BIAS)
 
+class GET_WR():
+    def get_WR(N,X):
+        shou_price=shou[N]
+        if N<X:
+            ring = 0
+            N-1
+        else:
+            ring = N-X+1
+
+        max_price = float(max(highs[ring:N+1]))
+        min_price = float(min(lows[ring:N+1]))
+        try:
+            WR = (float(shou_price)-max_price)*100/(max_price-min_price)
+        except ZeroDivisionError:
+            WR = 0.0
+        return numpy.round(WR,decimals=3)
+
+    def Begin_WR(data,C):
+        WRS.clear()
+        for s in range(len(data)):
+            WRS.append(GET_WR.get_WR(s, C))
+        print(WRS)
+
+
 start= datetime.datetime.now()
 
 
-# getDetail_Data('6038631','RSI24')
+getDetail_Data('6038671','WR10')
 # getDetail_Data('6038631',"MACD")
 # getDetail_Data('6038631',"KDJ")
 #getDetail_Data('6038671',"BIAS12")
