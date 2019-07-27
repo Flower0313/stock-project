@@ -30,6 +30,10 @@ DS = []
 JS = []
 BIAS = []
 WRS =[]
+MA=[]
+VOL = []
+OBV=[]
+CCI=[]
 shou.reverse()
 
 
@@ -45,9 +49,11 @@ def getDetail_Data(code,methods):
             html = urllib.request.urlopen(request)
             data = re.search(r'(\()+([\d\D]*)',html.read().decode('utf-8')).group()[1:-1]
             for s in json.loads(data)["data"]:
-                shou.append(s.split(',')[2])
-                highs.append(s.split(',')[3])
-                lows.append(s.split(',')[4])
+                temps = s.split(',')
+                shou.append(temps[2])
+                highs.append(temps[3])
+                lows.append(temps[4])
+                VOL.append(temps[5])
             if(methods=="MACD"):
                 GET_DIFandDEAandMACD.GET_ALL(shou)
             elif(methods[:3]=="RSI"):
@@ -58,6 +64,12 @@ def getDetail_Data(code,methods):
                 GET_BIAS.Begin_bias(shou,int(methods[4:]))
             elif(methods[:2]=="WR"):
                 GET_WR.Begin_WR(shou,int(methods[2:]))
+            elif(methods[:2]=="MA"):
+                GET_MA.Begin_MA(shou,int(methods[2:]))
+            elif(methods=="OBV"):
+                GET_OBV.Begin_OBV(shou)
+            elif(methods=="CCI"):
+                GET_CCI.Begin_CCI(shou)
             break
         except:
             pass
@@ -232,14 +244,74 @@ class GET_WR():
             WRS.append(GET_WR.get_WR(s, C))
         print(WRS)
 
+class GET_MA():
+    def get_MA(data,N,C):
+        if (N >= (C - 1)):
+            num = 0
+            for s in range(C):
+                num += float(data[N - s])
+            ma =num/C
+            return numpy.round(ma, decimals=2)
+        else:
+            return 0
+
+    def Begin_MA(data,C):
+        MA.clear()
+        for s in range(len(data)):
+            MA.append(GET_MA.get_MA(shou, s, C))
+        print(MA)
+
+
+class GET_OBV():
+    def get_OBV(shou,vol,N):
+        if(N!=0):
+            if shou[N]>shou[N-1]:
+                return GET_OBV.get_OBV(shou,vol,N-1)+float(VOL[N])
+            elif shou[N]<shou[N-1]:
+                return GET_OBV.get_OBV(shou,vol,N-1)-float(VOL[N])
+            else:
+                return GET_OBV.get_OBV(shou,vol,N-1)
+        return 0.0
+
+    def Begin_OBV(data):
+        OBV.clear()
+        for s in range(len(data)):
+            OBV.append(GET_OBV.get_OBV(data, VOL, s))
+        print(OBV)
+
+class GET_CCI():
+    def get_cci(shou,N):
+        if(N>=14):
+            num = 0
+            typs=[]
+            md=0
+            for s in range(14):
+                typ = (float(highs[N-1-s])+float(shou[N-1-s])+float(lows[N-1-s]))/3
+                typs.append(typ)
+                num+=typ
+            num=num/14
+            for s in range(14):
+                md+=abs(num-typs[s])
+            md=md/14
+            return numpy.round((float(typs[0])-num)/(md*0.015),decimals=2)
+        return 0.0
+
+    def Begin_CCI(data):
+        CCI.clear()
+        for s in range(len(data)):
+            CCI.append(GET_CCI.get_cci(shou, s))
+        print(CCI)
 
 start= datetime.datetime.now()
 
 
-getDetail_Data('6038671','WR10')
-# getDetail_Data('6038631',"MACD")
+getDetail_Data('6038631',"CCI")
+
+
+
 # getDetail_Data('6038631',"KDJ")
 #getDetail_Data('6038671',"BIAS12")
+
 
 
 
