@@ -34,6 +34,12 @@ MA=[]
 VOL = []
 OBV=[]
 CCI=[]
+ROC=[]
+MAROC=[]  #6天一周期
+PDI=[]
+MDI=[]
+ADX=[]
+
 shou.reverse()
 
 
@@ -70,6 +76,10 @@ def getDetail_Data(code,methods):
                 GET_OBV.Begin_OBV(shou)
             elif(methods=="CCI"):
                 GET_CCI.Begin_CCI(shou)
+            elif(methods=="ROC"):
+                GET_ROC.Begin_ROC(shou)
+            elif(methods=="DMI"):
+                GET_DMI.Begin_DMI(shou,highs,lows)
             break
         except:
             pass
@@ -302,12 +312,104 @@ class GET_CCI():
             CCI.append(GET_CCI.get_cci(shou, s))
         print(CCI)
 
+class GET_ROC():
+    def get_ROCandMAROC(data,N):
+        if N!=0:
+            if N<=11:
+                pre_day = float(data[0])
+            else:
+                pre_day = float(data[N-11])
+            now_day =float(data[N])
+            roc = numpy.round((now_day-pre_day)*100/pre_day,decimals=3)
+            ROC.append(roc)
+            if N>=5:
+                six_num = 0
+                for s in range(6):
+                    six_num+=ROC[N-s]
+                MAROC.append(numpy.round(six_num/6,decimals=2))
+            else:
+                MAROC.append(0.0)
+            return
+        ROC.append(0.0)
+
+    def Begin_ROC(data):
+        ROC.clear()
+        MAROC.clear()
+        for s in range(len(data)):
+            GET_ROC.get_ROCandMAROC(data, s)
+        print(ROC)
+        print(MAROC)
+
+class GET_DMI():
+    def get_DMI(data,highs,lows,N):
+        if N<=13:
+            MDI.append(0.0)
+            PDI.append(0.0)
+            ADX.append(0.0)
+            return
+        PDI_num = 0
+        MDI_num =0
+        tr_num = 0
+        dx_num = 0
+
+        for s in range(14):
+            if s==13 and N==14:
+                hd = 0
+                ld=0
+            else:
+                hd =float(highs[(N-1)-s])-float(highs[(N-1)-(s+1)])
+                ld = float(lows[(N-1)-s])-float(lows[(N-1)-(s+1)])
+            if hd>0 :
+                PDI_num+=hd
+            elif ld<0:
+                MDI_num+=abs(ld)
+
+        for s in range(14):
+            A = float(highs[(N-1)-s])-float(lows[(N-1)-s])
+            if s==13 and N==14:
+                B=0
+                C=0
+            else:
+                B = abs(float(highs[(N-1)-s])-float(data[(N-1)-(s+1)]))
+                C = abs(float(lows[(N-1)-s])-float(data[(N-1)-(s+1)]))
+            if A > B:
+                if A>C:
+                    tr = A
+                else:
+                    tr = C
+            else:
+                if B>C:
+                    tr =B
+                else:
+                    tr = C
+            tr_num+=tr
+        PDI.append(numpy.round(((PDI_num))*100/(tr_num),decimals=2))
+        MDI.append(numpy.round(((MDI_num))*100/(tr_num),decimals=2))
+        if N<=18:
+            ADX.append(0.0)
+        else:
+            for s in range(6):
+                try:
+                    dx_num += (abs(float(PDI[N-1-s]) - float(MDI[N-1-s]))) * 100 / (float(PDI[N-1-s]) + float(MDI[N-1-s]))
+                except:
+                    dx_num+=0
+            ADX.append(dx_num/6)
+
+    def Begin_DMI(data,highs,lows):
+        MDI.clear()
+        PDI.clear()
+        ADX.clear()
+        for s in range(len(shou)):
+            GET_DMI.get_DMI(data, highs, lows, s + 1)
+        print(PDI)
+        print(MDI)
+        print(ADX)
 start= datetime.datetime.now()
 
+getDetail_Data('6038631',"DMI")
 
-getDetail_Data('6038631',"CCI")
 
-
+# get_DMI(shou,highs,lows,14)
 
 # getDetail_Data('6038631',"KDJ")
 #getDetail_Data('6038671',"BIAS12")
