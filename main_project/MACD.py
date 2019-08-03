@@ -36,9 +36,8 @@ OBV=[]
 CCI=[]
 ROC=[]
 MAROC=[]  #6天一周期
-PDI=[]
-MDI=[]
-ADX=[]
+DMI={"PDI":[],"MDI":[],"ADX":[]}
+BOLL = {"MID":[],"UPPER":[],"LOWER":[]}
 
 expmema_tr = []
 expmema_dmp = []
@@ -84,6 +83,8 @@ def getDetail_Data(code,methods):
                 GET_ROC.Begin_ROC(shou)
             elif(methods=="DMI"):
                 GET_DMI.Begin_DMI(shou,highs,lows)
+            elif(methods=="BOLL"):
+                GET_BOLL.Begin_BOLL(shou)
             break
         except:
             pass
@@ -350,12 +351,12 @@ class GET_DMI():
         MDI_num = 0
         tr_num = 0
         if N<=13:
-            MDI.append(0.0)
-            PDI.append(0.0)
+            DMI['MDI'].append(0.0)
+            DMI['PDI'].append(0.0)
             expmema_tr.append(0.0)
             expmema_dmp.append(0.0)
             expmema_dmm.append(0.0)
-            ADX.append(0.0)
+            DMI["ADX"].append(0.0)
             return
         elif N==14:
             for s in range(14):
@@ -398,38 +399,77 @@ class GET_DMI():
             expmema_dmm.append(MDI_num)
             expmema_dmp.append(PDI_num)
             expmema_tr.append(tr_num)
-        PDI.append(numpy.round(((PDI_num))*100/(tr_num),decimals=2))
-        MDI.append(numpy.round(((MDI_num))*100/(tr_num),decimals=2))
+        DMI["PDI"].append(numpy.round(((PDI_num))*100/(tr_num),decimals=2))
+        DMI["MDI"].append(numpy.round(((MDI_num))*100/(tr_num),decimals=2))
         if N<=18:
-            ADX.append(0.0)
+            DMI["ADX"].append(0.0)
         else:
             dx_num=0
             if N==19:
                 for s in range(6):
                     try:
-                        dx_num += (abs(float(PDI[N-1-s]) - float(MDI[N-1-s]))) * 100 / (float(PDI[N-1-s]) + float(MDI[N-1-s]))
+                        dx_num += (abs(float(DMI["PDI"][N-1-s]) - float(DMI["MDI"][N-1-s]))) * 100 / (float(DMI["PDI"][N-1-s]) + float(DMI["MDI"][N-1-s]))
                     except:
                         dx_num+=0
                 dx_num=dx_num/6
             else:
-                dx_num = (2*(abs(float(PDI[N-1]) - float(MDI[N-1]))) * 100 / (float(PDI[N-1]) + float(MDI[N-1]))+5*ADX[N-2])/7
-            ADX.append(numpy.round(dx_num, decimals=2))
+                dx_num = (2*(abs(float(DMI["PDI"][N-1]) - float(DMI["MDI"][N-1]))) * 100 / (float(DMI["PDI"][N-1]) + float(DMI["MDI"][N-1]))+5*DMI['ADX'][N-2])/7
+            DMI["ADX"].append(numpy.round(dx_num, decimals=2))
 
     def Begin_DMI(data,highs,lows):
-        MDI.clear()
-        PDI.clear()
-        ADX.clear()
+        DMI["MDI"].clear()
+        DMI["PDI"].clear()
+        DMI["ADX"].clear()
         expmema_dmp.clear()
         expmema_tr.clear()
         expmema_dmm.clear()
         for s in range(len(shou)):
             GET_DMI.get_DMI(data, highs, lows, s + 1)
-        print(PDI)
-        print(MDI)
-        print(ADX)
-start= datetime.datetime.now()
+        print(DMI["PDI"])
+        print(DMI["MDI"])
+        print(DMI["ADX"])
+class GET_BOLL():
+    def get_boll(N):
+        mid = 0
+        temp_mid=0
+        if(N>=20):
+            for s in range(20):
+                mid += float(shou[N-1-s])
+            mid = numpy.round(mid/20,decimals=2)
+            for s in range(20):
+                temp_mid += pow(abs(float(shou[N-1-s])-mid),2)
+            md =pow(temp_mid/20,.5)
+            upper = numpy.round(mid + 2*md,decimals=2)
+            lower = numpy.round(mid - 2*md,decimals=2)
+            BOLL["MID"].append(mid)
+            BOLL["UPPER"].append(upper)
+            BOLL["LOWER"].append(lower)
+        else:
+            BOLL["MID"].append(0.0)
+            BOLL["UPPER"].append(0.0)
+            BOLL["LOWER"].append(0.0)
 
+    def Begin_BOLL(data):
+        BOLL["MID"].clear()
+        BOLL["UPPER"].clear()
+        BOLL["LOWER"].clear()
+        for s in range(len(shou)):
+            GET_BOLL.get_boll(s+1)
+        print(BOLL["MID"])
+        print(BOLL["UPPER"])
+        print(BOLL["LOWER"])
+
+
+start= datetime.datetime.now()
+# getDetail_Data('6038631',"RSI6")
+# getDetail_Data('6038631',"KDJ")
+# getDetail_Data('6038631',"MACD")
+# getDetail_Data('6038631',"WR10")
 # getDetail_Data('6038631',"DMI")
+# getDetail_Data('6038631',"BIAS6")
+# getDetail_Data('6038631',"OBV")
+# getDetail_Data('6038631',"CCI")
+# getDetail_Data('6038631',"ROC")
 
 # get_DMI(shou,highs,lows,14)
 
