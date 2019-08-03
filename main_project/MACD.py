@@ -40,6 +40,10 @@ PDI=[]
 MDI=[]
 ADX=[]
 
+expmema_tr = []
+expmema_dmp = []
+expmema_dmm = []
+
 shou.reverse()
 
 
@@ -342,63 +346,82 @@ class GET_ROC():
 
 class GET_DMI():
     def get_DMI(data,highs,lows,N):
+        PDI_num = 0
+        MDI_num = 0
+        tr_num = 0
         if N<=13:
             MDI.append(0.0)
             PDI.append(0.0)
+            expmema_tr.append(0.0)
+            expmema_dmp.append(0.0)
+            expmema_dmm.append(0.0)
             ADX.append(0.0)
             return
-        PDI_num = 0
-        MDI_num =0
-        tr_num = 0
-        dx_num = 0
-
-        for s in range(14):
-            if s==13 and N==14:
-                hd = 0
-                ld=0
-            else:
-                hd =float(highs[(N-1)-s])-float(highs[(N-1)-(s+1)])
-                ld = float(lows[(N-1)-s])-float(lows[(N-1)-(s+1)])
-            if hd>0 :
-                PDI_num+=hd
-            elif ld<0:
-                MDI_num+=abs(ld)
-
-        for s in range(14):
-            A = float(highs[(N-1)-s])-float(lows[(N-1)-s])
-            if s==13 and N==14:
-                B=0
-                C=0
-            else:
-                B = abs(float(highs[(N-1)-s])-float(data[(N-1)-(s+1)]))
-                C = abs(float(lows[(N-1)-s])-float(data[(N-1)-(s+1)]))
-            if A > B:
-                if A>C:
-                    tr = A
+        elif N==14:
+            for s in range(14):
+                if s==13 and N==14:
+                    hd = 0
+                    ld=0
                 else:
-                    tr = C
-            else:
-                if B>C:
-                    tr =B
+                    hd =float(highs[(N-1)-s])-float(highs[(N-1)-(s+1)])
+                    ld = float(lows[(N-1)-(s+1)])-float(lows[(N-1)-s])
+                if hd>0 and hd>ld :
+                    PDI_num+=hd
+                elif ld>0 and ld>hd:
+                    MDI_num+=ld
+                A = float(highs[(N - 1) - s]) - float(lows[(N - 1) - s])
+                if s == 13 and N == 14:
+                    B = 0
+                    C = 0
                 else:
-                    tr = C
-            tr_num+=tr
+                    B = abs(float(highs[(N - 1) - s]) - float(data[(N - 1) - (s + 1)]))
+                    C = abs(float(lows[(N - 1) - s]) - float(data[(N - 1) - (s + 1)]))
+                tr_num += max(A, B, C)/14
+            PDI_num = PDI_num / 14
+            MDI_num = MDI_num / 14
+            expmema_tr.append(tr_num)
+            expmema_dmp.append(PDI_num)
+            expmema_dmm.append(MDI_num)
+        elif N>=15:
+            hd = float(highs[(N - 1)]) - float(highs[(N - 2)])
+            ld = float(lows[(N - 2)]) - float(lows[(N - 1)])
+            if hd > 0 and hd > ld:
+                PDI_num = (2 * hd + 13 * expmema_dmp[N - 2]) / 15
+            else:
+                PDI_num = (2 *0 + 13 * expmema_dmp[N - 2]) / 15
+            if ld > 0 and ld > hd:
+                MDI_num = (2 * ld + 13 * expmema_dmm[N - 2]) / 15
+            else:
+                MDI_num = (2 * 0 + 13 * expmema_dmm[N - 2]) / 15
+            temp_tr=max(float(highs[(N - 1)]) - float(lows[(N - 1)]),abs(float(highs[(N - 1)]) - float(data[(N - 2)])),abs(float(lows[(N - 1)]) - float(data[(N - 2)])))
+            tr_num =(2*temp_tr+13*expmema_tr[N-2])/15
+            expmema_dmm.append(MDI_num)
+            expmema_dmp.append(PDI_num)
+            expmema_tr.append(tr_num)
         PDI.append(numpy.round(((PDI_num))*100/(tr_num),decimals=2))
         MDI.append(numpy.round(((MDI_num))*100/(tr_num),decimals=2))
         if N<=18:
             ADX.append(0.0)
         else:
-            for s in range(6):
-                try:
-                    dx_num += (abs(float(PDI[N-1-s]) - float(MDI[N-1-s]))) * 100 / (float(PDI[N-1-s]) + float(MDI[N-1-s]))
-                except:
-                    dx_num+=0
-            ADX.append(dx_num/6)
+            dx_num=0
+            if N==19:
+                for s in range(6):
+                    try:
+                        dx_num += (abs(float(PDI[N-1-s]) - float(MDI[N-1-s]))) * 100 / (float(PDI[N-1-s]) + float(MDI[N-1-s]))
+                    except:
+                        dx_num+=0
+                dx_num=dx_num/6
+            else:
+                dx_num = (2*(abs(float(PDI[N-1]) - float(MDI[N-1]))) * 100 / (float(PDI[N-1]) + float(MDI[N-1]))+5*ADX[N-2])/7
+            ADX.append(numpy.round(dx_num, decimals=2))
 
     def Begin_DMI(data,highs,lows):
         MDI.clear()
         PDI.clear()
         ADX.clear()
+        expmema_dmp.clear()
+        expmema_tr.clear()
+        expmema_dmm.clear()
         for s in range(len(shou)):
             GET_DMI.get_DMI(data, highs, lows, s + 1)
         print(PDI)
@@ -406,8 +429,7 @@ class GET_DMI():
         print(ADX)
 start= datetime.datetime.now()
 
-getDetail_Data('6038631',"DMI")
-
+# getDetail_Data('6038631',"DMI")
 
 # get_DMI(shou,highs,lows,14)
 
